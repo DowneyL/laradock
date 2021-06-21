@@ -74,6 +74,32 @@ RUN set -xe; \
 #
 
 ###########################################################################
+# yasd:
+###########################################################################
+USER root
+
+ARG INSTALL_YASD=false
+
+RUN if [ ${INSTALL_YASD} = true ]; then \
+  if [ ${LARADOCK_PHP_VERSION} = "7.3" ] || [ ${LARADOCK_PHP_VERSION} = "7.4" ] || [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
+      apt-get update -yqq \
+      && apt-get install -yqq libboost-all-dev \
+      && cd /usr/src \
+      && git clone https://github.com/swoole/yasd.git \
+      && cd /usr/src/yasd \
+      && phpize --clean \
+      && phpize \
+      && ./configure \
+      && make clean \
+      && make \
+      && make install \
+      && docker-php-ext-enable yasd \
+  ;fi \
+;fi
+
+COPY ./yasd.ini /usr/local/etc/php/conf.d/yasd.ini
+
+###########################################################################
 # BZ2:
 ###########################################################################
 
@@ -253,6 +279,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
   sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /usr/local/etc/php/conf.d/xdebug.ini \
 ;fi
 RUN sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /usr/local/etc/php/conf.d/xdebug.ini
+
 
 ###########################################################################
 # pcov:
