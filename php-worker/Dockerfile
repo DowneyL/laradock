@@ -422,6 +422,26 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
   php -m | grep -r 'memcached'; \
 fi
 
+###########################################################################
+# Memcache EXTENSION
+###########################################################################
+
+ARG INSTALL_MEMCACHE=false
+RUN set -eux; \
+    if [ ${INSTALL_MEMCACHE} = true ]; then \
+      if   [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "50600" ]; then \
+        pecl install memcache-2.2.7; \
+      elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70000" ]; then \
+        pecl install memcache-4.0.5.1; \
+      elif [ $(php -r "echo PHP_VERSION_ID - PHP_RELEASE_VERSION;") = "70100" ]; then \
+        pecl install memcache-4.0.5.2; \
+      else \
+        pecl install memcache; \
+      fi; \
+      docker-php-ext-enable memcache; \
+      php -m | grep -q 'memcache'; \
+    fi
+
 #
 #--------------------------------------------------------------------------
 # Optional Supervisord Configuration
