@@ -1262,7 +1262,7 @@ RUN set -eux; \
       else \
         pecl install memcache; \
       fi; \
-      docker-php-ext-enable memcache; \
+        echo "extension=memcache.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/memcache.ini; \
       php -m | grep -q 'memcache'; \
     fi
 
