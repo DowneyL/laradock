@@ -1261,6 +1261,7 @@ RUN set -eux; \
         pecl install memcache; \
       fi; \
         echo "extension=memcache.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/memcache.ini; \
+        ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/memcache.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-memcache.ini; \
       php -m | grep -q 'memcache'; \
     fi
 
